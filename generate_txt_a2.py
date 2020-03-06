@@ -19,8 +19,22 @@ import keras.callbacks
 from keras import Model
 import re
 from keras.models import load_model
+import os 
 
-files = ['128gru20_at_epoch0.hd5', '128gru20_at_epoch0.hd5', '128gru20_at_epoch0.hd5']
+files = ['256gru40_at_epoch0.hd5',
+         '256gru20_at_epoch20.hd5',
+         '256gru20_at_epoch0.hd5',
+         '256LSTM40_at_epoch0.hd5',
+         '256LSTM20_at_epoch20.hd5',
+         '256LSTM20_at_epoch0.hd5',
+         '128gru40_at_epoch0.hd5',
+         '128gru20_at_epoch40.hd5',
+         '128gru20_at_epoch20.hd5',
+         '128gru20_at_epoch0.hd5',
+         '128LSTM40_at_epoch0.hd5',
+         '128LSTM20_at_epoch20.hd5',
+         '128LSTM20_at_epoch0.hd5']
+
 #model = load_model('128gru20_at_epoch0.hd5')
 f = open('corpus.txt', 'r')
 txt = ''
@@ -61,29 +75,33 @@ Y_mod = to_categorical(Y)
 # filepath = "model_weights-{epoch:02d}-{loss:.4f}.hdf5"
 # checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 
-model =load_model('128gru20_at_epoch0.hd5')
-model.compile(loss='categorical_crossentropy', optimizer='adam')
-
 #final text generation
 start = 10   #random row from the X array
-string_mapped = list(X[start])
-full_string = [n_to_char[value] for value in string_mapped]
 
 # generating characters
-for i in range(500):
-    x = np.reshape(string_mapped,(1,len(string_mapped), 1))
-    x = x / float(len(characters))
-
-    pred_index = np.argmax(model.predict(x, verbose=0))
-    seq = [n_to_char[value] for value in string_mapped]
-    full_string.append(n_to_char[pred_index])
-
-    string_mapped.append(pred_index)
-    string_mapped = string_mapped[1:len(string_mapped)]
-    print(string_mapped)
+for f in files:
     
-print('hello')
-print(string_mapped)
+    model =load_model(f)
+    model.compile(loss='categorical_crossentropy', optimizer='adam')
+    
+    string_mapped = list(X[start])
+    full_string = [n_to_char[value] for value in string_mapped]
+
+    for i in range(500):
+        x = np.reshape(string_mapped,(1,len(string_mapped), 1))
+        x = x / float(len(characters))
+    
+        pred_index = np.argmax(model.predict(x, verbose=0))
+        seq = [n_to_char[value] for value in string_mapped]
+        full_string.append(n_to_char[pred_index])
+    
+        string_mapped.append(pred_index)
+        string_mapped = string_mapped[1:len(string_mapped)]
+        print(string_mapped)
+    print('-------------------------------------------------')
+    print(f)
+    print(string_mapped)
+    print('-------------------------------------------------')
         
         
         
